@@ -6,16 +6,22 @@ import { BehaviorSubject, Subject } from 'rxjs';
 })
 export class SpinnerService {
 
-  private loading = new BehaviorSubject<boolean>(false)
-  isLoading = new Subject<boolean>();
+  loadingSub: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  loadingMap: Map<string, boolean> = new Map<string, boolean>();
 
-  constructor() { }
+  setLoading(loading: boolean, url: string): void {
+    if(!url) {
+      throw new Error('The request URL is required');
+    }
+    if(loading) {
+      this.loadingMap.set(url, loading);
+      this.loadingSub.next(true);
+    } else if( loading === false && this.loadingMap.has(url)) {
+      this.loadingMap.delete(url);
+    }
 
-  show(): void {
-    this.isLoading.next(true);
-  }
-
-  hide(): void {
-    this.isLoading.next(false);
+    if(this.loadingMap.size === 0) {
+      this.loadingSub.next(false);
+    }
   }
 }

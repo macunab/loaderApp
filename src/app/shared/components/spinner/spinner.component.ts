@@ -11,13 +11,10 @@ export class SpinnerComponent implements OnInit{
 
   loading: boolean = false;
 
-  isLoading: Subject<boolean> = this.spinnerService.isLoading;
-  constructor(private spinnerService: SpinnerService) { 
-    console.log(this.isLoading);
-  }
+  constructor(private spinnerService: SpinnerService) {}
 
   ngOnInit(): void {
-    this.spinnerService.isLoading
+    this.spinnerService.loadingSub
       .pipe(delay(0))
       .subscribe((loading) => {
         this.loading = loading;

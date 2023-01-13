@@ -1,6 +1,7 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { finalize, Observable } from "rxjs";
+import { Observable, finalize } from 'rxjs';
+import { delay } from 'rxjs/operators'
 import { SpinnerService } from "../shared/services/spinner.service";
 
 @Injectable({
@@ -12,16 +13,11 @@ export class SpinnerInterceptor implements HttpInterceptor {
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-        this.spinnerService.show();
+        this.spinnerService.setLoading(true, req.url);
         
-        console.log('Paso por le interceptor');
         return next.handle(req)
             .pipe(
-                finalize(() => {
-                    //this.spinnerService.hide();
-                    console.log(`EL SPINNER ESTA: ${this.spinnerService.isLoading}`)
-                })
-            );
+                delay(3000),
+                finalize(() => this.spinnerService.setLoading(false, req.url)))
     }
-
 }
